@@ -17,7 +17,7 @@ class Parser {
 	ValueObject::Ptr parse_object();
 	ValueArray::Ptr parse_array();
 	Value::Ptr parse_literal();
-	Token advance();
+	inline Token advance() { return prev; };
 	bool consume(token_type type);
 	std::string get_literal(Token &token);
 
