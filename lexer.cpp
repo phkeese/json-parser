@@ -36,6 +36,9 @@ Token Lexer::get_next() {
 		return make_string();
 		break;
 	default:
+		if (isnumber(c)) {
+			return make_number();
+		}
 		return make_token(T_ERROR);
 		break;
 	}
@@ -62,6 +65,34 @@ Token Lexer::make_string() {
 		}
 	}
 	return make_token(T_STRING);
+}
+
+// Finish rest of number until non-number
+Token Lexer::make_number() {
+	// First part of number
+	while (isnumber(peek())) {
+		advance();
+	}
+
+	// If not a decimal point, return just the first part
+	if (peek() != '.') {
+		return make_token(T_NUMBER);
+	}
+
+	// Consume decimal
+	advance();
+
+	// Next one has to be number
+	if (!isnumber(peek())) {
+		return make_token(T_ERROR);
+	}
+	
+	// Second part of number
+	while (isnumber(peek())) {
+		advance();
+	}
+
+	return make_token(T_NUMBER);
 }
 
 int Lexer::advance() {

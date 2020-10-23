@@ -15,10 +15,10 @@ std::ostream &operator<<(std::ostream &os, const json::Token &t) {
 
 int main() {
 	std::stringstream stream;
-	stream << "{}[]  ,:  \"Test\\\"\"";
+	stream << "{}[]  ,:  \"Test\\\"\"123.455 5";
 	json::Lexer lex{stream};
 
-	const std::array<json::Token, 8> expect{{
+	const std::array<json::Token, 10> expect{{
 		json::T_LBRACE,	  0,  1, // {
 		json::T_RBRACE,	  1,  1, // }
 		json::T_LBRACKET, 2,  1, // [
@@ -26,7 +26,9 @@ int main() {
 		json::T_COMMA,	  6,  1, // ,
 		json::T_COLON,	  7,  1, // :
 		json::T_STRING,	  10, 8, // "Test\"""
-		json::T_EOF,	  18, 0	 // EOF
+		json::T_NUMBER,	  18, 7, // 123.455
+		json::T_NUMBER,	  26, 1, // 5
+		json::T_EOF,	  27, 0	 // EOF
 	}};
 
 	for (auto e : expect) {
