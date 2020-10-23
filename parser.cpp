@@ -83,6 +83,7 @@ ValueArray::Ptr Parser::parse_array() {
 		if (!value) {
 			return nullptr;
 		}
+		data.push_back(value);
 	}
 
 	// Parse rest of data
