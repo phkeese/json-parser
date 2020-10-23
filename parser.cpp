@@ -1,8 +1,9 @@
 #include "parser.h"
+#include <sstream>
 
 namespace json {
 Parser::Parser(std::istream &stream)
-	: lexer{stream}, prev{T_EOF, -1, 0}, peek{T_EOF, -1, 0} {
+	: stream{stream}, lexer{stream}, prev{T_EOF, -1, 0}, peek{T_EOF, -1, 0} {
 	// "Prime the pump"
 	peek = lexer.get_next();
 }
@@ -27,28 +28,42 @@ Value::Ptr Parser::parse() {
 // Finish parsing an object
 ValueObject::Ptr Parser::parse_object() {
 	ValueObject::data_type data{};
-	while (peek.type != T_RBRACE) {
-		// Require string key
-		if (!consume(T_STRING)) {
+	if (peek.type != T_RBRACE) {
+		if (!parse_key_value(data)) {
 			return nullptr;
 		}
-		std::string key_literal = get_literal(prev);
-		std::string key = key_literal.substr(1, key_literal.length() - 2);
-		// Require key : value
-		if (!consume(T_COLON)) {
-			return nullptr;
-		}
-		Value::Ptr value = parse();
-		data[key] = value;
 
-		// Require comma after key : value
-		if (!consume(T_COMMA)) {
-			return nullptr;
-		}
+		do {
+			// Require comma after key : value
+			if (!consume(T_COMMA)) {
+				return nullptr;
+			}
+
+			if (!parse_key_value(data)) {
+				return nullptr;
+			}
+		} while (peek.type != T_RBRACE);
 	}
 	// Closing brace
 	consume(T_RBRACE);
 	return std::make_shared<ValueObject>(data);
+}
+
+// Parse one key : value pair
+bool Parser::parse_key_value(ValueObject::data_type &data) {
+	// Require string key
+	if (!consume(T_STRING)) {
+		return false;
+	}
+	std::string key_literal = get_literal(prev);
+	std::string key = key_literal.substr(1, key_literal.length() - 2);
+	// Require key : value
+	if (!consume(T_COLON)) {
+		return false;
+	}
+	Value::Ptr value = parse();
+	data[key] = value;
+	return true;
 }
 
 // Finish parsing an array
@@ -94,4 +109,38 @@ Value::Ptr Parser::parse_literal() {
 		break;
 	}
 }
+
+Token Parser::advance() {
+	prev = peek;
+	peek = lexer.get_next();
+	return prev;
+}
+
+bool Parser::consume(token_type type) {
+	if (peek.type == type) {
+		advance();
+		return true;
+	}
+	return false;
+}
+
+std::string Parser::get_literal(Token &token) {
+	auto prev_offset = stream.tellg();
+
+	// Extract relevent part of stream
+	stream.seekg(token.start);
+	std::stringstream ss{};
+	for (int i = 0; i < token.length; i++) {
+		int c = stream.get();
+		if (c == EOF) {
+			break;
+		}
+		ss << char(c);
+	}
+	// Do not disturb lexer
+	stream.seekg(prev_offset);
+
+	return ss.str();
+}
+
 } // namespace json
