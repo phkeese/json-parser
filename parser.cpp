@@ -80,15 +80,30 @@ bool Parser::parse_key_value(ValueObject::data_type &data) {
 // Finish parsing an array
 ValueArray::Ptr Parser::parse_array() {
 	ValueArray::data_type data{};
-	while (peek.type != T_RBRACKET) {
+
+	// No data
+	if (peek.type == T_RBRACKET) {
+		return std::make_shared<ValueArray>(data);
+	}
+
+	// At least one data
+	{
 		Value::Ptr value = parse();
-		data.push_back(value);
-		// Require comma between values
-		if (!consume(T_COMMA)) {
+		if (!value) {
 			return nullptr;
 		}
 	}
-	// All closing bracket
+
+	// Parse rest of data
+	while (peek.type == T_COMMA) {
+		consume(T_COMMA);
+		Value::Ptr value = parse();
+		if (!value) {
+			return nullptr;
+		}
+		data.push_back(value);
+	}
+	// Closing bracket
 	if (!consume(T_RBRACKET)) {
 		return nullptr;
 	}
