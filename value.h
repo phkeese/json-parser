@@ -17,7 +17,7 @@ enum value_type {
 };
 
 struct Value {
-	Value(value_type type);
+	Value(value_type type = V_NULL) : type{type} {}
 	virtual ~Value();
 	const value_type type;
 };
