@@ -23,8 +23,6 @@ struct Value {
 	const value_type type;
 };
 
-using ValuePtr = std::shared_ptr<Value>;
-
 template <typename T, value_type V> struct ValueType : public Value {
 	using Ptr = std::shared_ptr<ValueType>;
 	ValueType(T data) : Value{V}, data{data} {}

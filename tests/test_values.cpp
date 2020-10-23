@@ -17,14 +17,14 @@ int main() {
 	ValueString s{"my key"};
 	ValueNumber n{10};
 
-	ValuePtr n_ptr = std::make_shared<ValueNumber>(n);
+	ValueNumber::Ptr n_ptr = std::make_shared<ValueNumber>(n);
 	ValueArray a{{}};
 	a.data.push_back(n_ptr);
 
-	ValuePtr b_ptr = std::make_shared<ValueBool>(b);
+	ValueBool::Ptr b_ptr = std::make_shared<ValueBool>(b);
 	a.data.push_back(b_ptr);
 
-	ValuePtr a_ptr = std::make_shared<ValueArray>(a);
+	ValueArray::Ptr a_ptr = std::make_shared<ValueArray>(a);
 	ValueObject o{{}};
 	o.data[s] = a_ptr;
 
