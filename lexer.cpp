@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include <cctype>
 
 namespace json {
 
@@ -35,7 +36,7 @@ Token Lexer::get_next() {
 		return make_string();
 		break;
 	default:
-		if (isnumber(c)) {
+		if (isdigit(c)) {
 			return make_number();
 		} else if (isalpha(c)) {
 			return make_ident(c);
@@ -71,7 +72,7 @@ Token Lexer::make_string() {
 // Finish rest of number until non-number
 Token Lexer::make_number() {
 	// First part of number
-	while (isnumber(peek())) {
+	while (isdigit(peek())) {
 		advance();
 	}
 
@@ -84,12 +85,12 @@ Token Lexer::make_number() {
 	advance();
 
 	// Next one has to be number
-	if (!isnumber(peek())) {
+	if (!isdigit(peek())) {
 		return make_token(T_ERROR);
 	}
 
 	// Second part of number
-	while (isnumber(peek())) {
+	while (isdigit(peek())) {
 		advance();
 	}
 
