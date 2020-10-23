@@ -40,10 +40,11 @@ class Lexer {
 	Token make_token(token_type);
 	Token make_string();
 	Token make_number();
-	Token make_ident();
+	Token make_ident(char start);
 	int advance();
 	int peek();
 	int prev();
+	bool match(std::string rest);
 	void skip_whitespace();
 	std::istream &stream;
 	int offset, length;

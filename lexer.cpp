@@ -9,8 +9,7 @@ Lexer::~Lexer() {}
 Token Lexer::get_next() {
 	skip_whitespace();
 	int c = advance();
-	switch (c)
-	{
+	switch (c) {
 	case EOF:
 		return make_token(T_EOF);
 		break;
@@ -38,6 +37,8 @@ Token Lexer::get_next() {
 	default:
 		if (isnumber(c)) {
 			return make_number();
+		} else if (isalpha(c)) {
+			return make_ident(c);
 		}
 		return make_token(T_ERROR);
 		break;
@@ -86,13 +87,40 @@ Token Lexer::make_number() {
 	if (!isnumber(peek())) {
 		return make_token(T_ERROR);
 	}
-	
+
 	// Second part of number
 	while (isnumber(peek())) {
 		advance();
 	}
 
 	return make_token(T_NUMBER);
+}
+
+// Match an identifier with true, false, null
+Token Lexer::make_ident(char start) {
+	switch (start) {
+	case 't':
+		if (match("rue")) {
+			return make_token(T_TRUE);
+		}
+		return make_token(T_ERROR);
+		break;
+	case 'n':
+		if (match("ull")) {
+			return make_token(T_NULL);
+		}
+		return make_token(T_ERROR);
+		break;
+	case 'f':
+		if (match("alse")) {
+			return make_token(T_FALSE);
+		}
+		return make_token(T_ERROR);
+		break;
+	default:
+		return make_token(T_ERROR);
+		break;
+	}
 }
 
 int Lexer::advance() {
@@ -112,6 +140,16 @@ int Lexer::peek() {
 }
 
 // No prev yet
+
+// Match the rest of a literal with a string
+bool Lexer::match(std::string rest) {
+	for (int i = 0; i < rest.length(); i++) {
+		if (advance() != rest.at(i)) {
+			return false;
+		}
+	}
+	return true;
+}
 
 void Lexer::skip_whitespace() {
 	while (isspace(peek())) {
