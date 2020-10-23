@@ -32,6 +32,9 @@ Token Lexer::get_next() {
 	case ':':
 		return make_token(T_COLON);
 		break;
+	case '"':
+		return make_string();
+		break;
 	default:
 		return make_token(T_ERROR);
 		break;
@@ -43,6 +46,22 @@ Token Lexer::make_token(token_type type) {
 	offset += length;
 	length = 0;
 	return token;
+}
+
+// Finish rest of string until (including) "
+Token Lexer::make_string() {
+	int c;
+	// Until we reach the end, only escape "
+	while ((c = advance()) != '"') {
+		if (c == '\\') {
+			advance();
+		}
+		// EOF in string is error
+		if (c == EOF) {
+			return make_token(T_ERROR);
+		}
+	}
+	return make_token(T_STRING);
 }
 
 int Lexer::advance() {

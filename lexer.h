@@ -38,6 +38,9 @@ class Lexer {
 
   private:
 	Token make_token(token_type);
+	Token make_string();
+	Token make_number();
+	Token make_ident();
 	int advance();
 	int peek();
 	int prev();
