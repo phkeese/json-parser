@@ -11,6 +11,7 @@ class Parser {
 	virtual ~Parser();
 
 	Value::Ptr parse();
+	Token get_token() const;
 
   private:
 	ValueObject::Ptr parse_object();
