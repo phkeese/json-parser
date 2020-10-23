@@ -42,4 +42,5 @@ int main() {
 	assert(number.data == 10);
 
 	ValueBool &my_bool = dynamic_cast<ValueBool &>(*array.data[1]);
+	assert(my_bool.data == true);
 }
