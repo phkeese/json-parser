@@ -12,3 +12,8 @@ enable_testing()
 add_executable(test_lexer tests/test_lexer.cpp)
 target_link_libraries(test_lexer json_parser)
 add_test(lexer test_lexer)
+
+add_executable(test_values tests/test_values.cpp)
+target_link_libraries(test_values json_parser)
+add_test(values test_values)
+
