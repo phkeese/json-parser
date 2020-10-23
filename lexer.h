@@ -5,7 +5,6 @@
 namespace json {
 enum token_type {
 	// Meta
-	T_ERROR,
 	T_EOF,
 
 	// Non-data

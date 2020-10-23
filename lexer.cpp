@@ -41,7 +41,7 @@ Token Lexer::get_next() {
 		} else if (isalpha(c)) {
 			return make_ident(c);
 		}
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 		break;
 	}
 }
@@ -63,7 +63,7 @@ Token Lexer::make_string() {
 		}
 		// EOF in string is error
 		if (c == EOF) {
-			return make_token(T_ERROR);
+			return make_token(T_EOF);
 		}
 	}
 	return make_token(T_STRING);
@@ -86,7 +86,7 @@ Token Lexer::make_number() {
 
 	// Next one has to be number
 	if (!isdigit(peek())) {
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 	}
 
 	// Second part of number
@@ -104,22 +104,22 @@ Token Lexer::make_ident(char start) {
 		if (match("rue")) {
 			return make_token(T_TRUE);
 		}
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 		break;
 	case 'n':
 		if (match("ull")) {
 			return make_token(T_NULL);
 		}
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 		break;
 	case 'f':
 		if (match("alse")) {
 			return make_token(T_FALSE);
 		}
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 		break;
 	default:
-		return make_token(T_ERROR);
+		return make_token(T_EOF);
 		break;
 	}
 }
