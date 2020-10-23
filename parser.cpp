@@ -28,22 +28,33 @@ Value::Ptr Parser::parse() {
 // Finish parsing an object
 ValueObject::Ptr Parser::parse_object() {
 	ValueObject::data_type data{};
-	if (peek.type != T_RBRACE) {
-		if (!parse_key_value(data)) {
+	// No data
+	if (consume(T_RBRACE)) {
+		return std::make_shared<ValueObject>(data);
+	}
+
+	// Need at least one key : value pair
+	if (!parse_key_value(data)) {
+		return nullptr;
+	}
+
+	// If at end
+	if (consume(T_RBRACE)) {
+		return std::make_shared<ValueObject>(data);
+	}
+
+	// Require at least one more key : value pair
+	do {
+		// Require comma after key : value
+		if (!consume(T_COMMA)) {
 			return nullptr;
 		}
 
-		do {
-			// Require comma after key : value
-			if (!consume(T_COMMA)) {
-				return nullptr;
-			}
+		if (!parse_key_value(data)) {
+			return nullptr;
+		}
+	} while (peek.type != T_RBRACE);
 
-			if (!parse_key_value(data)) {
-				return nullptr;
-			}
-		} while (peek.type != T_RBRACE);
-	}
 	// Closing brace
 	consume(T_RBRACE);
 	return std::make_shared<ValueObject>(data);
