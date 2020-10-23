@@ -17,6 +17,7 @@ enum value_type {
 };
 
 struct Value {
+	using Ptr = std::shared_ptr<Value>;
 	Value(value_type type = V_NULL) : type{type} {}
 	virtual ~Value(){};
 	const value_type type;
@@ -24,30 +25,18 @@ struct Value {
 
 using ValuePtr = std::shared_ptr<Value>;
 
-struct ValueBool : public Value {
-	ValueBool(bool data) : Value{V_BOOL}, data{data} {};
-	bool data;
+template <typename T, value_type V> struct ValueType : public Value {
+	using Ptr = std::shared_ptr<ValueType>;
+	ValueType(T data) : Value{V}, data{data} {}
+	T data;
+	operator T() { return data; }
 };
 
-struct ValueString : public Value {
-	ValueString(std::string data) : Value{V_STRING}, data{data} {};
-	std::string data;
-};
-
-struct ValueNumber : public Value {
-	ValueNumber(double data) : Value{V_NUMBER}, data{data} {};
-	double data;
-};
-
-struct ValueArray : public Value {
-	ValueArray(std::vector<ValuePtr> data) : Value{V_ARRAY}, data{data} {}
-	std::vector<ValuePtr> data;
-};
-
-struct ValueObject : public Value {
-	ValueObject(std::unordered_map<std::string, ValuePtr> data)
-		: Value{V_OBJECT}, data{data} {}
-	std::unordered_map<std::string, ValuePtr> data;
-};
+using ValueBool = ValueType<bool, V_BOOL>;
+using ValueString = ValueType<std::string, V_STRING>;
+using ValueNumber = ValueType<double, V_NUMBER>;
+using ValueArray = ValueType<std::vector<Value::Ptr>, V_ARRAY>;
+using ValueObject =
+	ValueType<std::unordered_map<std::string, Value::Ptr>, V_OBJECT>;
 
 } // namespace json
