@@ -150,11 +150,8 @@ std::string Parser::get_literal(Token &token) {
 	stream.clear();
 	stream.seekg(token.start);
 	std::stringstream ss{};
-	for (int i = 0; i < token.length; i++) {
+	for (int i = 0; i < token.length && stream.good(); i++) {
 		int c = stream.get();
-		if (c == EOF) {
-			break;
-		}
 		ss << char(c);
 	}
 	// Do not disturb lexer
