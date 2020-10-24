@@ -80,4 +80,65 @@ int main() {
 		ValueString &string = dynamic_cast<ValueString &>(*value);
 		assert(string.data == "This is a string");
 	}
+
+	// Number
+	{
+		std::stringstream stream{};
+		stream << "100.0";
+		Parser parser{stream};
+		Value::Ptr value = parser.parse();
+
+		assert(value);
+		assert(value->type == V_NUMBER);
+
+		ValueNumber &number = dynamic_cast<ValueNumber &>(*value);
+		assert(number.data == 100.0);
+	}
+
+	// Bool
+	{
+		std::stringstream stream{};
+		stream << "true";
+		Parser parser{stream};
+		Value::Ptr value = parser.parse();
+
+		assert(value);
+		assert(value->type == V_BOOL);
+
+		ValueBool &boolean = dynamic_cast<ValueBool &>(*value);
+		assert(boolean.data == true);
+	}
+
+	// Null
+	{
+		std::stringstream stream{};
+		stream << "null";
+		Parser parser{stream};
+		Value::Ptr value = parser.parse();
+
+		assert(value);
+		assert(value->type == V_NULL);
+	}
+
+	// Multiple values after each other
+	{
+		std::stringstream stream{};
+		stream << "1 \"\" true";
+		Parser parser{stream};
+
+		Value::Ptr first = parser.parse();
+		assert(first);
+		assert(first->type == V_NUMBER);
+		assert(dynamic_cast<ValueNumber &>(*first).data == 1);
+
+		Value::Ptr second = parser.parse();
+		assert(second);
+		assert(second->type == V_STRING);
+		assert(dynamic_cast<ValueString &>(*second).data == "");
+
+		Value::Ptr third = parser.parse();
+		assert(third);
+		assert(third->type == V_BOOL);
+		assert(dynamic_cast<ValueBool &>(*third).data == true);
+	}
 }
