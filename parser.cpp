@@ -144,8 +144,10 @@ bool Parser::consume(token_type type) {
 
 std::string Parser::get_literal(Token &token) {
 	auto prev_offset = stream.tellg();
+	auto prev_flags = stream.flags();
 
 	// Extract relevent part of stream
+	stream.clear();
 	stream.seekg(token.start);
 	std::stringstream ss{};
 	for (int i = 0; i < token.length; i++) {
@@ -156,6 +158,7 @@ std::string Parser::get_literal(Token &token) {
 		ss << char(c);
 	}
 	// Do not disturb lexer
+	stream.setf(prev_flags);
 	stream.seekg(prev_offset);
 
 	return ss.str();
