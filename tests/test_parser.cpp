@@ -66,4 +66,18 @@ int main() {
 		assert(bool_false.data == false);
 		assert(string.data == "string");
 	}
+
+	// String
+	{
+		std::stringstream stream{};
+		stream << "\"This is a string\"";
+		Parser parser{stream};
+		Value::Ptr value = parser.parse();
+
+		assert(value);
+		assert(value->type == V_STRING);
+
+		ValueString &string = dynamic_cast<ValueString &>(*value);
+		assert(string.data == "This is a string");
+	}
 }
