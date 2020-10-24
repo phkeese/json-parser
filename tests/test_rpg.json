@@ -1,0 +1,13 @@
+{
+	"name": "player",
+	"items": [
+		"sword",
+		"potion"
+	],
+	"levels": [
+		1,
+		2,
+		3
+	],
+	"has_key": false
+}
