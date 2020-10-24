@@ -4,7 +4,7 @@ project(json-parser)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_library(json_parser lexer.cpp parser.cpp)
+add_library(json_parser lexer.cpp parser.cpp writer.cpp)
 
 include(CTest)
 enable_testing()
@@ -20,3 +20,7 @@ add_test(values test_values)
 add_executable(test_parser tests/test_parser.cpp)
 target_link_libraries(test_parser json_parser)
 add_test(parser test_parser)
+
+add_executable(test_rpg tests/test_rpg.cpp)
+target_link_libraries(test_rpg json_parser)
+add_test(rpg test_rpg)
